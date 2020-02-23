@@ -5,5 +5,6 @@
 </head>
 <body>
      <h1>list page</h1>
+     <a href="shiro/logout"> 登出 </a>
 </body>
 </html>

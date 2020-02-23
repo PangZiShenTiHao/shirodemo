@@ -3,14 +3,13 @@ package com.hxch.realms;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthenticatingRealm;
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.util.ByteSource;
 
-public class ShiroRealm extends AuthenticatingRealm {
+public class SecondShiroRealm extends AuthenticatingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         System.out.println("doGetAuthenticationInfo --> "+authenticationToken);
-        System.out.println("【FirstShiroRealm】 --> "+authenticationToken);
+        System.out.println("【SecondShiroRealm】 --> "+authenticationToken);
         // 1.将 authenticationToken 强转 UsernamePasswordToken
         UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
 
@@ -36,9 +35,9 @@ public class ShiroRealm extends AuthenticatingRealm {
         Object principal = username;
         String credentials = null; //"fc1709d0a95a6be30bc5926fdb7f22f4";
         if ("admin".equals(username)){
-            credentials = "038bdaf98f2037b31f1e75b5b4c9b26e";
+            credentials = "ce2f6417c7e1d32c1d81a797ee0b499f87c5de06";
         }else if ("user".equals(username)){
-            credentials = "098d2c478e9c11555ce2823231e02ec1";
+            credentials = "073d4c3ae812935f23cb3f2a71943f49e082a718";
         }
         String realmName = getName();
         ByteSource credentialsSalt = ByteSource.Util.bytes(username);
@@ -49,9 +48,9 @@ public class ShiroRealm extends AuthenticatingRealm {
     }
 
     public static void main(String[] args) {
-        String hashAlgorithmName = "MD5";
+        String hashAlgorithmName = "SHA1";
         String credentials = "123456";
-        Object salt = ByteSource.Util.bytes("user");;
+        Object salt = ByteSource.Util.bytes("admin");
         int hashIterations = 1024;
         Object simpleHash = new SimpleHash(hashAlgorithmName, credentials, salt, hashIterations);
         System.out.println(simpleHash);
