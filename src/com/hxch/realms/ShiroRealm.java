@@ -1,12 +1,19 @@
 package com.hxch.realms;
 
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.realm.AuthenticatingRealm;
+import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-public class ShiroRealm extends AuthenticatingRealm {
+import java.util.HashSet;
+import java.util.Set;
+
+public class ShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         System.out.println("doGetAuthenticationInfo --> "+authenticationToken);
@@ -55,5 +62,21 @@ public class ShiroRealm extends AuthenticatingRealm {
         int hashIterations = 1024;
         Object simpleHash = new SimpleHash(hashAlgorithmName, credentials, salt, hashIterations);
         System.out.println(simpleHash);
+    }
+
+    //授权实现的方法
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        // 1. 从 principalCollection 获取登录用户信息
+        Object primaryPrincipal = principalCollection.getPrimaryPrincipal();
+        // 2. 利用登录用户的信息获取相应的角色权限（可能需要查询数据库）
+        Set<String> roles = new HashSet<>();
+        roles.add("user");
+        if ("admin".equals(primaryPrincipal)){
+            roles.add("admin");
+        }
+        // 3. 创建SimpleAuthorizationInfo 并返回
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(roles);
+        return info;
     }
 }
