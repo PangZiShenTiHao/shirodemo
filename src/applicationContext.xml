@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 1. 配置 SecurityManager-->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="cacheManager" ref="cacheManager"/>
+        <property name="sessionMode" value="native"/>
+        <property name="realm" ref="jdbcRealm"/>
+    </bean>
+
+    <!--2.配置 CacheManager-->
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+
+        <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
+    </bean>
+
+    <!--3. 配置 Realm 直接配置实现了org.apache.shiro.realm.Realm-->
+    <bean id="jdbcRealm" class="com.hxch.realms.ShiroRealm">
+
+    </bean>
+
+    <!-- 4.配置 LifecycleBeanPostProcessor 可以自动的调用 配置在 Spring IOC 容器中shiro bean 的生命周期方法-->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"></bean>
+
+    <!-- 5.启用IOC 容器中使用 shiro 的注解， 但必须配置了LifecycleBeanPostProcessor 之后才能使用-->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"/>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+
+    <!-- 6.id 必须和web.xml文件中配置的DelegatingFilterProxy 的id一致-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/login.jsp"/>
+        <property name="successUrl" value="/list.jsp"/>
+        <property name="unauthorizedUrl" value="/unauthorized.jsp"/>
+
+        <!--
+           配置哪些页面需要受保护。
+           以及访问这些页面需要的权限
+           1）anon 可以被匿名访问
+           2）authc 必须认证 （即登录）后才能访问
+        -->
+        <property name="filterChainDefinitions">
+            <value>
+                /login.jsp = anon
+
+                /** = authc
+            </value>
+        </property>
+
+    </bean>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</beans>
