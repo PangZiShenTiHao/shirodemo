@@ -3,6 +3,7 @@ package com.hxch.exception;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,13 +18,22 @@ import java.util.Map;
 @ControllerAdvice(basePackages="com.hxch.handler")
 public class ExceptionUtil {
 
-    @ExceptionHandler(RuntimeException.class)
+    /*@ExceptionHandler(RuntimeException.class)
     @ResponseBody//返回json串
     public Map<String, Object> errorResoult() {
         Map<String, Object> errorMap = new HashMap<String, Object>();
         errorMap.put("errorCode", "500");
         errorMap.put("errorMsg", "系统错误");
         return errorMap;
+    }*/
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseBody//返回json串
+    public ModelAndView errorResoult() {
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("errorMsg","请求异常");
+        mv.setViewName("error");
+        return mv;
     }
 
 }
